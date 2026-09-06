@@ -10,6 +10,15 @@ public class ExpenseTrackerDbContext : DbContext
 
     }
 
-    public DbSet<Expense> Expenses => Set<Expense>();
-    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<User> Users { get; set; }
+    public DbSet<Expense> Expenses { get; set; }
+    public DbSet<Category> Categories { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Expense>()
+            .Property(e => e.ExpenseDate)
+            .HasColumnType("date");
+    }
 }

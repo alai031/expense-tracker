@@ -1,0 +1,35 @@
+<div class="auth-container">
+  <h1>Expense Tracker</h1>
+  <h2>Login</h2>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" />
+      @if (loginForm.get("email")?.touched && loginForm.get("email")?.invalid) {
+        <p class="error">Please enter a valid email.</p>
+      }
+    </div>
+
+    <div>
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password" />
+      @if (
+        loginForm.get("password")?.touched && loginForm.get("password")?.invalid
+      ) {
+        <p class="error">Password is required.</p>
+      }
+    </div>
+
+    @if (errorMessage) {
+      <p class="error">{{ errorMessage }}</p>
+    }
+
+    <button type="submit">Login</button>
+  </form>
+
+  <p>
+    Don't have an account?
+    <a routerLink="/register">Register</a>
+  </p>
+</div>

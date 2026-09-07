@@ -1,0 +1,18 @@
+<div class="dashboard">
+  <header class="dashboard-header">
+    <h1>Expense Tracker</h1>
+
+    <button type="button" (click)="logout()">Logout</button>
+  </header>
+
+  <main>
+    <h2>Your Expenses</h2>
+
+    <app-expense-form (expenseCreated)="onExpenseCreated()"></app-expense-form>
+
+    <app-expense-list
+      [expenses]="expenses"
+      (expenseDeleted)="onExpenseDeleted()"
+    ></app-expense-list>
+  </main>
+</div>

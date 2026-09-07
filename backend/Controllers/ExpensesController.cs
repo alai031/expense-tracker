@@ -30,6 +30,7 @@ public class ExpensesController : ControllerBase
                             .Select(e => new
                             {
                                 e.Id,
+                                e.Description,
                                 e.Amount,
                                 e.ExpenseDate,
                                 e.CategoryId,
@@ -79,6 +80,7 @@ public class ExpensesController : ControllerBase
         if (categoryExists == false)
             return BadRequest("Invalid category.");
         existingExpense.Amount = expense.Amount;
+        existingExpense.Description = expense.Description;
         existingExpense.ExpenseDate = expense.ExpenseDate;
         existingExpense.CategoryId = expense.CategoryId;
         await _context.SaveChangesAsync();

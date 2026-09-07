@@ -27,6 +27,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 });
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular",
+    policy =>
+    {
+        policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
@@ -37,6 +46,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseCors("AllowAngular");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

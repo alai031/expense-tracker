@@ -10,14 +10,21 @@ import { DecimalPipe } from '@angular/common';
 })
 export class ExpenseListComponent {
   @Input() expenses: Expense[] = [];
-  @Output() expenseDeleted = new EventEmitter<void>();
+  @Input() filtersApplied = false;
+  @Output() expenseDeleted = new EventEmitter<number>();
+  @Output() expenseEdit = new EventEmitter<Expense>();
+
   constructor(private expenseService: ExpenseService) {}
+
+  editExpense(expense: Expense): void {
+    this.expenseEdit.emit(expense);
+  }
 
   deleteExpense(id: number): void {
     if (!confirm('Are you sure you want to delete this expense?')) return;
     this.expenseService.deleteExpense(id).subscribe({
       next: () => {
-        this.expenseDeleted.emit();
+        this.expenseDeleted.emit(id);
       },
       error: (error) => {
         console.error('Failed to delete expense:', error);

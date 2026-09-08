@@ -40,7 +40,12 @@
 
   <div>
     <label for="expenseDate">Expense Date</label>
-    <input id="expenseDate" type="date" formControlName="expenseDate" />
+    <input
+      id="expenseDate"
+      type="date"
+      formControlName="expenseDate"
+      [max]="maxDate"
+    />
     @if (
       expenseForm.get("expenseDate")?.touched &&
       expenseForm.get("expenseDate")?.invalid
@@ -49,5 +54,10 @@
     }
   </div>
 
-  <button type="submit">Add Expense</button>
+  <button type="submit">
+    {{ expenseToEdit ? "Update Expense" : "Add Expense" }}
+  </button>
+  @if (expenseToEdit) {
+    <button type="button" (click)="cancelEdit()">Cancel</button>
+  }
 </form>

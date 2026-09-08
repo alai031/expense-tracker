@@ -20,11 +20,23 @@ public class ExpensesController : ControllerBase
 
     //GET: api/expenses
     [HttpGet]
-    public async Task<IActionResult> GetExpenses()
+    public async Task<IActionResult> GetExpenses([FromQuery] ExpenseFilter filter)
     {
         var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        var expenses = await _context.Expenses
-                            .Where(e => e.UserId == userId)
+        var query = _context.Expenses.Where(e => e.UserId == userId);
+
+        if (filter.CategoryId.HasValue)
+            query = query.Where(e => e.CategoryId == filter.CategoryId.Value);
+        if (filter.StartDate.HasValue)
+            query = query.Where(e => e.ExpenseDate >= filter.StartDate.Value);
+        if (filter.EndDate.HasValue)
+            query = query.Where(e => e.ExpenseDate <= filter.EndDate.Value);
+        if (filter.MinAmount.HasValue)
+            query = query.Where(e => e.Amount >= filter.MinAmount.Value);
+        if (filter.MaxAmount.HasValue)
+            query = query.Where(e => e.Amount <= filter.MaxAmount.Value);
+
+        var expenses = await query
                             .Include(e => e.Category)
                             .OrderByDescending(e => e.ExpenseDate)
                             .Select(e => new
@@ -41,12 +53,81 @@ public class ExpensesController : ControllerBase
         return Ok(expenses);
     }
 
+    //GET: api/expenses/summary
+    [HttpGet("summary")]
+    public async Task<IActionResult> GetSummary()
+    {
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var query = _context.Expenses.Where(e => e.UserId == userId);
+        var total = await query.SumAsync(e => e.Amount);
+        var count = await query.CountAsync();
+        var average = count > 0 ? await query.AverageAsync(e => e.Amount) : 0;
+        return Ok(new
+        {
+            totalSpent = total,
+            expenseCount = count,
+            averageExpense = average
+        });
+    }
+
+    //GET: api/expenses/by-category
+    [HttpGet("by-category")]
+    public async Task<IActionResult> GetSpendingByCategory()
+    {
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var results = await _context.Expenses
+                        .Where(e => e.UserId == userId)
+                        .GroupBy(e => e.Category.Name)
+                        .Select(g => new
+                        {
+                            category = g.Key,
+                            total = g.Sum(e => e.Amount)
+                        }).OrderByDescending(x => x.total)
+                        .ToListAsync();
+        return Ok(results);
+    }
+
+    //GET: api/expenses/monthly
+    [HttpGet("monthly")]
+    public async Task<IActionResult> GetMonthlySpending()
+    {
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var results = await _context.Expenses
+                        .Where(e => e.UserId == userId)
+                        .GroupBy(e => new
+                        {
+                            Year = e.ExpenseDate.Year,
+                            Month = e.ExpenseDate.Month
+                        })
+                        .Select(g => new
+                        {
+                            year = g.Key.Year,
+                            month = g.Key.Month,
+                            total = g.Sum(e => e.Amount)
+                        })
+                        .OrderBy(x => x.year)
+                        .ThenBy(x => x.month)
+                        .ToListAsync();
+        var response = results.Select(x => new
+        {
+            month = $"{x.year}-{x.month:D2}",
+            total = x.total
+        });
+        return Ok(response);
+    }
+
     //POST: api/expenses
     [HttpPost]
     public async Task<IActionResult> CreateExpense(Expense expense)
     {
         if (expense.Amount <= 0)
             return BadRequest("Amount must be greater than 0.");
+
+        if (expense.ExpenseDate > DateOnly.FromDateTime(DateTime.UtcNow))
+            return BadRequest("Expense date cannot be in the future.");
+
+        if (string.IsNullOrWhiteSpace(expense.Description))
+            return BadRequest("Description is required.");
 
         var categoryExists = await _context.Categories.AnyAsync(c => c.Id == expense.CategoryId);
         if (categoryExists == false)
@@ -62,8 +143,7 @@ public class ExpensesController : ControllerBase
         expense.UserId = userId;
         _context.Expenses.Add(expense);
         await _context.SaveChangesAsync();
-        // return CreatedAtAction(nameof(GetExpenses), new { id = expense.Id }, expense);
-        return Ok(expense);
+        return StatusCode(201, expense);
     }
 
     //PUT: api/expenses/{id}
@@ -72,6 +152,10 @@ public class ExpensesController : ControllerBase
     {
         if (expense.Amount <= 0)
             return BadRequest("Amount must be greater than 0.");
+        if (expense.ExpenseDate > DateOnly.FromDateTime(DateTime.UtcNow))
+            return BadRequest("Expense date cannot be in the future.");
+        if (string.IsNullOrWhiteSpace(expense.Description))
+            return BadRequest("Description is required.");
         var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var existingExpense = await _context.Expenses.FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
         if (existingExpense == null)

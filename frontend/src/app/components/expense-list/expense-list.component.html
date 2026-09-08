@@ -1,5 +1,9 @@
 @if (expenses.length == 0) {
-  <p>You don't have any expenses yet.</p>
+  @if (filtersApplied) {
+    <p>No expenses match the filters.</p>
+  } @else {
+    <p>You don't have any expenses yet.</p>
+  }
 } @else {
   <table>
     <thead>
@@ -20,6 +24,7 @@
           <td>{{ expense.categoryName }}</td>
           <td>${{ expense.amount | number: "1.2-2" }}</td>
           <td>
+            <button type="button" (click)="editExpense(expense)">Edit</button>
             <button type="button" (click)="deleteExpense(expense.id)">
               Delete
             </button>

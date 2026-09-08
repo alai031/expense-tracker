@@ -6,13 +6,150 @@
   </header>
 
   <main>
-    <h2>Your Expenses</h2>
+    <h2 class="summary-header">Dashboard</h2>
 
-    <app-expense-form (expenseCreated)="onExpenseCreated()"></app-expense-form>
+    <!-- Summary: Total Spent / Expenses / Average Expense -->
+    @if (summary) {
+      <section class="summary">
+        <div class="summary-item">
+          <h3>Total Spent</h3>
+          <p>${{ summary.totalSpent | number: "1.2-2" }}</p>
+        </div>
 
-    <app-expense-list
-      [expenses]="expenses"
-      (expenseDeleted)="onExpenseDeleted()"
-    ></app-expense-list>
+        <div class="summary-item">
+          <h3>Expenses</h3>
+          <p>{{ summary.expenseCount }}</p>
+        </div>
+
+        <div class="summary-item">
+          <h3>Average Expense</h3>
+          <p>${{ summary.averageExpense | number: "1.2-2" }}</p>
+        </div>
+      </section>
+    }
+
+    <!-- Spending by Category -->
+    <section>
+      <h2 class="section-header">Spending by Category</h2>
+      @if (categorySpending.length == 0) {
+        <p>No category spending yet.</p>
+      } @else {
+        <ul class="category-spending-list">
+          @for (item of categorySpending; track item.category) {
+            <li>
+              <span>{{ item.category }}</span>
+              <span>${{ item.total | number: "1.2-2" }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <!-- Monthly Spending -->
+    <section>
+      <h2 class="section-header">Monthly Spending</h2>
+
+      @if (monthlySpending.length == 0) {
+        <p>No monthly spending yet.</p>
+      } @else {
+        <ul class="monthly-spending-list">
+          @for (item of monthlySpending; track item.month) {
+            <li>
+              <span>{{ item.month }}</span>
+              <span>${{ item.total | number: "1.2-2" }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <!-- Add Expense -->
+    <section>
+      <h2>Add Expense</h2>
+      <app-expense-form
+        [expenseToEdit]="expenseToEdit"
+        (expenseCreated)="onExpenseCreated()"
+        (expenseUpdated)="onExpenseUpdated()"
+        (editCanceled)="onEditCanceled()"
+      ></app-expense-form>
+    </section>
+
+    <!-- Your Expenses -->
+    <section>
+      <h2>Your Expenses</h2>
+
+      <!-- Expense Filters -->
+      <div class="filters">
+        <h3>Filter Expenses</h3>
+        <div class="filter-controls">
+          <div class="filter-item">
+            <label for="categoryFilter">Category</label>
+
+            <select id="categoryFilter" [(ngModel)]="selectedCategoryId">
+              <option [ngValue]="null">All Categories</option>
+
+              @for (category of categories; track category.id) {
+                <option [ngValue]="category.id">
+                  {{ category.name }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="filter-item">
+            <label for="startDate">Start Date</label>
+            <input
+              id="startDate"
+              type="date"
+              [(ngModel)]="startDate"
+              [max]="maxDate"
+            />
+          </div>
+
+          <div class="filter-item">
+            <label for="endDate">End Date</label>
+            <input
+              id="endDate"
+              type="date"
+              [(ngModel)]="endDate"
+              [max]="maxDate"
+            />
+          </div>
+
+          <div class="filter-item">
+            <label for="minAmount">Minimum Amount</label>
+            <input
+              id="minAmount"
+              type="number"
+              step="0.01"
+              min="0"
+              [(ngModel)]="minAmount"
+            />
+          </div>
+
+          <div class="filter-item">
+            <label for="maxAmount">Maximum Amount</label>
+            <input
+              id="maxAmount"
+              type="number"
+              step="0.01"
+              min="0"
+              [(ngModel)]="maxAmount"
+            />
+          </div>
+        </div>
+        <div class="filter-buttons">
+          <button type="button" (click)="applyFilters()">Apply</button>
+          <button type="button" (click)="clearFilters()">Clear</button>
+        </div>
+      </div>
+
+      <app-expense-list
+        [expenses]="expenses"
+        [filtersApplied]="filtersApplied"
+        (expenseDeleted)="onExpenseDeleted($event)"
+        (expenseEdit)="onExpenseEdit($event)"
+      ></app-expense-list>
+    </section>
   </main>
 </div>

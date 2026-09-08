@@ -32,4 +32,9 @@ p {
 button {
   padding: 9px 16px;
   cursor: pointer;
+  margin-right: 10px;
+}
+
+button:last-child {
+  margin-right: 0;
 }

@@ -37,7 +37,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular",
     policy =>
     {
-        policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+        policy.WithOrigins("http://localhost:4200", "https://expense-tracker-psi-ten-54.vercel.app").AllowAnyHeader().AllowAnyMethod();
     });
 });
 

@@ -2,7 +2,7 @@
 
 A full-stack web application for tracking personal expenses, organizing spending by category, and analyzing spending habits. Built with Angular, ASP.NET Core Web API, and PostgreSQL.
 
-#### Deployed App: Expense Tracker
+**Deployed App**: Expense Tracker
 
 ## Features
 
@@ -27,7 +27,9 @@ A full-stack web application for tracking personal expenses, organizing spending
 | Testing | xUnit |
 | API Development and Testing | Postman |
 | Version Control | Git, GitHub |
-| Deployment | Vercel, Render, Neon |
+| Frontend Deployment | Vercel |
+| Backend Deployment | Render |
+| PostgreSQL Database Host | Neon |
 
 ## Architecture
 

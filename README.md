@@ -1,8 +1,11 @@
-# Expense Tracker
+# [Expense Tracker](https://expense-tracker-psi-ten-54.vercel.app/)
 
 A full-stack web application for tracking personal expenses, organizing spending by category, and analyzing spending habits. Built with Angular, ASP.NET Core Web API, and PostgreSQL.
 
-**Deployed App**: Expense Tracker
+## Demo Account
+Use the following credentials to explore the application:  
+- **Email:** `test@example.com`
+- **Password:** `Password123`
 
 ## Features
 
@@ -109,9 +112,9 @@ The API exposes REST endpoints for expense management and supporting functionali
 | `POST` | `/api/auth/register` | Register a user |
 | `POST` | `/api/auth/login` | Authenticate a user |
 | `GET` | `/api/expenses` | Retrieve expenses |
-| `GET` | `/api/expenses/{id}` | Retrieve an expense |
 | `POST` | `/api/expenses` | Create an expense |
 | `PUT` | `/api/expenses/{id}` | Update an expense |
 | `DELETE` | `/api/expenses/{id}` | Delete an expense |
-| `GET` | `/api/categories` | Retrieve categories |
-| `GET` | `/api/expenses/summary` | Retrieve spending summaries |
+| `GET` | `/api/expenses/summary` | Retrieve spending summary |
+| `GET` | `/api/expenses/by-category` | Retrieve spending by category |
+| `GET` | `/api/expenses/monthly` | Retrieve spending by month |

@@ -166,6 +166,16 @@ export class DashboardComponent implements OnInit {
     this.loadExpenses();
   }
 
+  categoryPercent(total: number): number {
+    const sum = this.categorySpending.reduce((acc, item) => acc + item.total, 0);
+    return sum > 0 ? (total / sum) * 100 : 0;
+  }
+
+  monthBarHeight(total: number): number {
+    const max = Math.max(...this.monthlySpending.map((item) => item.total));
+    return max > 0 ? (total / max) * 100 : 0;
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);

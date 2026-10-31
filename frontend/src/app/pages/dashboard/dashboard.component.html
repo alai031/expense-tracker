@@ -1,155 +1,197 @@
 <div class="dashboard">
-  <header class="dashboard-header">
-    <h1>Expense Tracker</h1>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">
+        <span class="logo-mark" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>
+        </span>
+        Expense Tracker
+      </div>
 
-    <button type="button" (click)="logout()">Logout</button>
+      <button type="button" class="btn btn-ghost" (click)="logout()">
+        Logout
+      </button>
+    </div>
   </header>
 
-  <main>
-    <h2 class="summary-header">Dashboard</h2>
+  <main class="content">
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <p class="card-subtitle">An overview of your spending.</p>
+    </div>
 
     <!-- Summary: Total Spent / Expenses / Average Expense -->
     @if (summary) {
-      <section class="summary">
-        <div class="summary-item">
+      <section class="stats">
+        <div class="card stat">
           <h3>Total Spent</h3>
-          <p>${{ summary.totalSpent | number: "1.2-2" }}</p>
+          <p class="tabular">${{ summary.totalSpent | number: "1.2-2" }}</p>
         </div>
 
-        <div class="summary-item">
+        <div class="card stat">
           <h3>Expenses</h3>
-          <p>{{ summary.expenseCount }}</p>
+          <p class="tabular">{{ summary.expenseCount }}</p>
         </div>
 
-        <div class="summary-item">
+        <div class="card stat">
           <h3>Average Expense</h3>
-          <p>${{ summary.averageExpense | number: "1.2-2" }}</p>
+          <p class="tabular">${{ summary.averageExpense | number: "1.2-2" }}</p>
         </div>
       </section>
     }
 
-    <!-- Spending by Category -->
-    <section>
-      <h2 class="section-header">Spending by Category</h2>
-      @if (categorySpending.length == 0) {
-        <p>No category spending yet.</p>
-      } @else {
-        <ul class="category-spending-list">
-          @for (item of categorySpending; track item.category) {
-            <li>
-              <span>{{ item.category }}</span>
-              <span>${{ item.total | number: "1.2-2" }}</span>
-            </li>
-          }
-        </ul>
-      }
-    </section>
+    <div class="grid-2">
+      <!-- Spending by Category -->
+      <section class="card">
+        <div class="card-header">
+          <h2 class="card-title">Spending by Category</h2>
+        </div>
+        @if (categorySpending.length == 0) {
+          <p class="empty-state">No category spending yet.</p>
+        } @else {
+          <ul class="category-list">
+            @for (item of categorySpending; track item.category) {
+              <li>
+                <div class="category-row">
+                  <span>{{ item.category }}</span>
+                  <span class="tabular">${{ item.total | number: "1.2-2" }}</span>
+                </div>
+                <div class="meter">
+                  <div
+                    class="meter-fill"
+                    [style.width.%]="categoryPercent(item.total)"
+                  ></div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
 
-    <!-- Monthly Spending -->
-    <section>
-      <h2 class="section-header">Monthly Spending</h2>
+      <!-- Monthly Spending -->
+      <section class="card">
+        <div class="card-header">
+          <h2 class="card-title">Monthly Spending</h2>
+        </div>
+        @if (monthlySpending.length == 0) {
+          <p class="empty-state">No monthly spending yet.</p>
+        } @else {
+          <ul class="month-chart">
+            @for (item of monthlySpending; track item.month) {
+              <li>
+                <span class="month-amount tabular">${{ item.total | number: "1.2-2" }}</span>
+                <div class="month-track">
+                  <div
+                    class="month-bar"
+                    [style.height.%]="monthBarHeight(item.total)"
+                  ></div>
+                </div>
+                <span class="month-label">{{ item.month }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
 
-      @if (monthlySpending.length == 0) {
-        <p>No monthly spending yet.</p>
-      } @else {
-        <ul class="monthly-spending-list">
-          @for (item of monthlySpending; track item.month) {
-            <li>
-              <span>{{ item.month }}</span>
-              <span>${{ item.total | number: "1.2-2" }}</span>
-            </li>
-          }
-        </ul>
-      }
-    </section>
+    <div class="grid-main">
+      <!-- Add Expense -->
+      <section class="card form-card" [class.editing]="expenseToEdit">
+        <div class="card-header">
+          <h2 class="card-title">
+            {{ expenseToEdit ? "Edit Expense" : "Add Expense" }}
+          </h2>
+        </div>
+        <app-expense-form
+          [expenseToEdit]="expenseToEdit"
+          (expenseCreated)="onExpenseCreated()"
+          (expenseUpdated)="onExpenseUpdated()"
+          (editCanceled)="onEditCanceled()"
+        ></app-expense-form>
+      </section>
 
-    <!-- Add Expense -->
-    <section>
-      <h2>Add Expense</h2>
-      <app-expense-form
-        [expenseToEdit]="expenseToEdit"
-        (expenseCreated)="onExpenseCreated()"
-        (expenseUpdated)="onExpenseUpdated()"
-        (editCanceled)="onEditCanceled()"
-      ></app-expense-form>
-    </section>
+      <!-- Your Expenses -->
+      <section class="card">
+        <div class="card-header">
+          <h2 class="card-title">Your Expenses</h2>
+        </div>
 
-    <!-- Your Expenses -->
-    <section>
-      <h2>Your Expenses</h2>
+        <!-- Expense Filters -->
+        <div class="filters">
+          <div class="filter-controls">
+            <div class="form-field">
+              <label for="categoryFilter">Category</label>
+              <select id="categoryFilter" [(ngModel)]="selectedCategoryId">
+                <option [ngValue]="null">All Categories</option>
+                @for (category of categories; track category.id) {
+                  <option [ngValue]="category.id">
+                    {{ category.name }}
+                  </option>
+                }
+              </select>
+            </div>
 
-      <!-- Expense Filters -->
-      <div class="filters">
-        <h3>Filter Expenses</h3>
-        <div class="filter-controls">
-          <div class="filter-item">
-            <label for="categoryFilter">Category</label>
+            <div class="form-field">
+              <label for="startDate">Start Date</label>
+              <input
+                id="startDate"
+                type="date"
+                [(ngModel)]="startDate"
+                [max]="maxDate"
+              />
+            </div>
 
-            <select id="categoryFilter" [(ngModel)]="selectedCategoryId">
-              <option [ngValue]="null">All Categories</option>
+            <div class="form-field">
+              <label for="endDate">End Date</label>
+              <input
+                id="endDate"
+                type="date"
+                [(ngModel)]="endDate"
+                [max]="maxDate"
+              />
+            </div>
 
-              @for (category of categories; track category.id) {
-                <option [ngValue]="category.id">
-                  {{ category.name }}
-                </option>
-              }
-            </select>
+            <div class="form-field">
+              <label for="minAmount">Min Amount</label>
+              <input
+                id="minAmount"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                [(ngModel)]="minAmount"
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="maxAmount">Max Amount</label>
+              <input
+                id="maxAmount"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                [(ngModel)]="maxAmount"
+              />
+            </div>
           </div>
-
-          <div class="filter-item">
-            <label for="startDate">Start Date</label>
-            <input
-              id="startDate"
-              type="date"
-              [(ngModel)]="startDate"
-              [max]="maxDate"
-            />
-          </div>
-
-          <div class="filter-item">
-            <label for="endDate">End Date</label>
-            <input
-              id="endDate"
-              type="date"
-              [(ngModel)]="endDate"
-              [max]="maxDate"
-            />
-          </div>
-
-          <div class="filter-item">
-            <label for="minAmount">Minimum Amount</label>
-            <input
-              id="minAmount"
-              type="number"
-              step="0.01"
-              min="0"
-              [(ngModel)]="minAmount"
-            />
-          </div>
-
-          <div class="filter-item">
-            <label for="maxAmount">Maximum Amount</label>
-            <input
-              id="maxAmount"
-              type="number"
-              step="0.01"
-              min="0"
-              [(ngModel)]="maxAmount"
-            />
+          <div class="filter-buttons">
+            <button type="button" class="btn btn-secondary btn-sm" (click)="clearFilters()">
+              Clear
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" (click)="applyFilters()">
+              Apply
+            </button>
           </div>
         </div>
-        <div class="filter-buttons">
-          <button type="button" (click)="applyFilters()">Apply</button>
-          <button type="button" (click)="clearFilters()">Clear</button>
-        </div>
-      </div>
 
-      <app-expense-list
-        [expenses]="expenses"
-        [filtersApplied]="filtersApplied"
-        (expenseDeleted)="onExpenseDeleted($event)"
-        (expenseEdit)="onExpenseEdit($event)"
-      ></app-expense-list>
-    </section>
+        <app-expense-list
+          [expenses]="expenses"
+          [filtersApplied]="filtersApplied"
+          (expenseDeleted)="onExpenseDeleted($event)"
+          (expenseEdit)="onExpenseEdit($event)"
+        ></app-expense-list>
+      </section>
+    </div>
   </main>
 </div>

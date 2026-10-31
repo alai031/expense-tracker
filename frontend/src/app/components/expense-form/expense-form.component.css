@@ -1,40 +1,26 @@
-form {
-  margin-bottom: 30px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+.input-prefix {
+  position: relative;
 }
 
-div {
-  margin-bottom: 15px;
+.input-prefix span {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
 }
 
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 600;
+.input-prefix input {
+  padding-left: 1.625rem;
 }
 
-input,
-select {
-  width: 100%;
-  max-width: 400px;
-  padding: 8px;
-  box-sizing: border-box;
+.form-actions {
+  display: flex;
+  gap: 0.625rem;
+  margin-top: 1.25rem;
 }
 
-p {
-  color: #d32f2f;
-  margin: 5px 0 0;
-  font-size: 14px;
-}
-
-button {
-  padding: 9px 16px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-
-button:last-child {
-  margin-right: 0;
+.form-actions .btn {
+  flex: 1;
 }

@@ -1,26 +1,40 @@
 <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
-  <div>
+  <div class="form-field">
     <label for="amount">Amount</label>
-    <input id="amount" type="number" step="0.01" formControlName="amount" />
+    <div class="input-prefix">
+      <span aria-hidden="true">$</span>
+      <input
+        id="amount"
+        type="number"
+        step="0.01"
+        formControlName="amount"
+        placeholder="0.00"
+      />
+    </div>
     @if (
       expenseForm.get("amount")?.touched && expenseForm.get("amount")?.invalid
     ) {
-      <p>Amount must be greater than 0.</p>
+      <p class="field-error">Amount must be greater than 0.</p>
     }
   </div>
 
-  <div>
+  <div class="form-field">
     <label for="description">Description</label>
-    <input id="description" type="text" formControlName="description" />
+    <input
+      id="description"
+      type="text"
+      formControlName="description"
+      placeholder="e.g. Groceries"
+    />
     @if (
       expenseForm.get("description")?.touched &&
       expenseForm.get("description")?.invalid
     ) {
-      <p>Description is required.</p>
+      <p class="field-error">Description is required.</p>
     }
   </div>
 
-  <div>
+  <div class="form-field">
     <label for="categoryId">Category</label>
     <select id="categoryId" formControlName="categoryId">
       <option value="">Select a category</option>
@@ -34,11 +48,11 @@
       expenseForm.get("categoryId")?.touched &&
       expenseForm.get("categoryId")?.invalid
     ) {
-      <p>Category is required.</p>
+      <p class="field-error">Category is required.</p>
     }
   </div>
 
-  <div>
+  <div class="form-field">
     <label for="expenseDate">Expense Date</label>
     <input
       id="expenseDate"
@@ -50,14 +64,18 @@
       expenseForm.get("expenseDate")?.touched &&
       expenseForm.get("expenseDate")?.invalid
     ) {
-      <p>Date is required.</p>
+      <p class="field-error">Date is required.</p>
     }
   </div>
 
-  <button type="submit">
-    {{ expenseToEdit ? "Update Expense" : "Add Expense" }}
-  </button>
-  @if (expenseToEdit) {
-    <button type="button" (click)="cancelEdit()">Cancel</button>
-  }
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">
+      {{ expenseToEdit ? "Update Expense" : "Add Expense" }}
+    </button>
+    @if (expenseToEdit) {
+      <button type="button" class="btn btn-secondary" (click)="cancelEdit()">
+        Cancel
+      </button>
+    }
+  </div>
 </form>

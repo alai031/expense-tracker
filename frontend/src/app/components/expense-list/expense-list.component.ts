@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Expense, ExpenseService } from '../../services/expense.service';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-expense-list',
-  imports: [DecimalPipe],
+  imports: [DatePipe, DecimalPipe],
   templateUrl: './expense-list.component.html',
   styleUrl: './expense-list.component.css',
 })

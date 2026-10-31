@@ -1,150 +1,200 @@
-.dashboard {
-  max-width: 900px;
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.topbar-inner,
+.content {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 1.5rem;
 }
 
-.dashboard-header {
+.topbar-inner {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 15px;
-  margin-bottom: 30px;
+  height: 64px;
 }
 
-.dashboard-header h1 {
-  margin: 0;
-}
-
-.dashboard-header button {
-  padding: 8px 16px;
-  cursor: pointer;
-}
-
-.summary-header {
-  text-align: center;
-  margin: 0px;
-}
-
-.summary {
+.content {
+  padding-block: 2rem 3rem;
   display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  text-align: center;
-  padding: 0px 20px 0px 20px;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.summary-item {
-  flex: 1;
-}
-
-.summary-item h3 {
-  margin-bottom: 8px;
-}
-
-.summary-item p {
+.page-header h1 {
   font-size: 1.5rem;
-  font-weight: bold;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.stat h3 {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.stat p {
+  margin: 0.5rem 0 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.grid-main {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) 2fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.form-card.editing {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.category-list {
+  list-style: none;
   margin: 0;
-}
-
-.category-spending-list {
-  list-style: none;
   padding: 0;
-  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.category-spending-list li {
+.category-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
-  font-size: 1.1rem;
-  border-bottom: 1px solid #ddd;
+  margin-bottom: 0.375rem;
+  font-weight: 500;
 }
 
-.category-spending-list li:first-child {
-  border-top: 1px solid #ddd;
+.meter,
+.month-track {
+  background: var(--color-surface-muted);
+  overflow: hidden;
 }
 
-.category-spending-list li span:last-child {
-  font-weight: bold;
+.meter {
+  height: 8px;
+  border-radius: 999px;
 }
 
-.monthly-spending-list {
+.meter-fill,
+.month-bar {
+  background: var(--color-primary);
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.month-chart {
   list-style: none;
+  margin: 0;
   padding: 0;
-  margin: 15px 0;
-}
-
-.monthly-spending-list li {
   display: flex;
-  justify-content: space-between;
+  gap: 0.75rem;
+  overflow-x: auto;
+  height: 220px;
+}
+
+.month-chart li {
+  flex: 1 0 64px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 12px 20px;
-  font-size: 1.1rem;
-  border-bottom: 1px solid #ddd;
+  gap: 0.375rem;
 }
 
-.monthly-spending-list li:first-child {
-  border-top: 1px solid #ddd;
+.month-track {
+  flex: 1;
+  width: 100%;
+  max-width: 40px;
+  display: flex;
+  align-items: flex-end;
+  border-radius: var(--radius-sm);
 }
 
-.monthly-spending-list li span:last-child {
-  font-weight: bold;
+.month-bar {
+  width: 100%;
+  min-height: 2px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
-.section-header {
-  text-align: center;
+.month-amount {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.month-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
 }
 
 .filters {
-  border: 1px solid #d0d0d0;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.filters h3 {
-  margin-top: 0;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .filter-controls {
   display: flex;
-  align-items: flex-end;
-  gap: 1.25rem;
-  width: 100%;
-  box-sizing: border-box;
   flex-wrap: wrap;
+  gap: 0 0.75rem;
 }
 
-.filter-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex: 1 1 150px;
-  min-width: 150px;
+/* Sized to content: category, two dates, two amounts. One row down to ~655px. */
+.filter-controls .form-field {
+  flex: 1.1 1 0;
+  min-width: 130px;
 }
 
-.filter-item label {
-  font-weight: 600;
+.filter-controls .form-field:first-child {
+  flex-grow: 0.9;
+  min-width: 145px;
 }
 
-.filter-item input,
-.filter-item select {
-  width: 100%;
-  padding: 0.5rem;
-  box-sizing: border-box;
+.filter-controls .form-field:nth-child(n + 4) {
+  flex-grow: 1;
+  min-width: 100px;
 }
 
 .filter-buttons {
   display: flex;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
-.filter-buttons button {
-  padding: 0.5rem 1rem;
+@media (max-width: 900px) {
+  .grid-2,
+  .grid-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar-inner,
+  .content {
+    padding-inline: 1rem;
+  }
 }

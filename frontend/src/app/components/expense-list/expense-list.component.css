@@ -11,6 +11,12 @@
   margin: 0 -1.5rem -1.5rem;
 }
 
+.skeleton-badge {
+  height: 1.375rem;
+  width: 5.5rem;
+  border-radius: 999px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;

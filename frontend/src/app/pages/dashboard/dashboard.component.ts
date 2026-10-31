@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -43,6 +44,11 @@ export class DashboardComponent implements OnInit {
   maxDate = new Date().toLocaleDateString('en-CA');
   filtersApplied: boolean = false;
 
+  expensesLoading = false;
+  summaryLoading = false;
+  categorySpendingLoading = false;
+  monthlySpendingLoading = false;
+
   constructor(
     private expenseService: ExpenseService,
     private authService: AuthService,
@@ -66,47 +72,63 @@ export class DashboardComponent implements OnInit {
     if (this.minAmount !== null) filter.minAmount = this.minAmount;
     if (this.maxAmount !== null) filter.maxAmount = this.maxAmount;
 
-    this.expenseService.getExpenses(filter).subscribe({
-      next: (expenses) => {
-        this.expenses = expenses;
-      },
-      error: (error) => {
-        console.error('Failed to load expenses:', error);
-      },
-    });
+    this.expensesLoading = true;
+    this.expenseService
+      .getExpenses(filter)
+      .pipe(finalize(() => (this.expensesLoading = false)))
+      .subscribe({
+        next: (expenses) => {
+          this.expenses = expenses;
+        },
+        error: (error) => {
+          console.error('Failed to load expenses:', error);
+        },
+      });
   }
 
   loadSummary(): void {
-    this.expenseService.getSummary().subscribe({
-      next: (summary) => {
-        this.summary = summary;
-      },
-      error: (error) => {
-        console.error('Failed to load summary:', error);
-      },
-    });
+    this.summaryLoading = true;
+    this.expenseService
+      .getSummary()
+      .pipe(finalize(() => (this.summaryLoading = false)))
+      .subscribe({
+        next: (summary) => {
+          this.summary = summary;
+        },
+        error: (error) => {
+          console.error('Failed to load summary:', error);
+        },
+      });
   }
 
   loadCategorySpending(): void {
-    this.expenseService.getSpendingByCategory().subscribe({
-      next: (categorySpending) => {
-        this.categorySpending = categorySpending;
-      },
-      error: (error) => {
-        console.error('Failed to load category spending:', error);
-      },
-    });
+    this.categorySpendingLoading = true;
+    this.expenseService
+      .getSpendingByCategory()
+      .pipe(finalize(() => (this.categorySpendingLoading = false)))
+      .subscribe({
+        next: (categorySpending) => {
+          this.categorySpending = categorySpending;
+        },
+        error: (error) => {
+          console.error('Failed to load category spending:', error);
+        },
+      });
   }
 
   loadMonthlySpending(): void {
-    this.expenseService.getMonthlySpending().subscribe({
-      next: (monthlySpending) => {
-        this.monthlySpending = monthlySpending;
-      },
-      error: (error) => {
-        console.error('Failed to load monthly spending:', error);
-      },
-    });
+    this.monthlySpendingLoading = true;
+    this.expenseService
+      .getMonthlySpending()
+      .pipe(finalize(() => (this.monthlySpendingLoading = false)))
+      .subscribe({
+        next: (monthlySpending) => {
+          this.monthlySpending = monthlySpending;
+        },
+        error: (error) => {
+          console.error('Failed to load monthly spending:', error);
+        },
+      });
   }
 
   loadCategories(): void {

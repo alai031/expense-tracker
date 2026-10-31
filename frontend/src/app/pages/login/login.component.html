@@ -38,7 +38,23 @@
         <p class="alert alert-error" role="alert">{{ errorMessage }}</p>
       }
 
-      <button type="submit" class="btn btn-primary btn-block">Login</button>
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        [disabled]="isSubmitting"
+      >
+        @if (isSubmitting) {
+          <span class="spinner" aria-hidden="true"></span>
+          Logging in…
+        } @else {
+          Login
+        }
+      </button>
+      @if (showSlowHint) {
+        <p class="hint" role="status">
+          The server is waking up. This can take up to a minute.
+        </p>
+      }
     </form>
 
     <p class="auth-footer">

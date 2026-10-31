@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -14,9 +14,12 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
   loginForm: FormGroup;
   errorMessage = '';
+  isSubmitting = false;
+  showSlowHint = false;
+  private slowHintTimer?: ReturnType<typeof setTimeout>;
 
   constructor(
     private fb: FormBuilder,
@@ -36,6 +39,7 @@ export class LoginComponent {
     }
 
     this.errorMessage = '';
+    this.startSubmitting();
 
     const { email, password } = this.loginForm.value;
 
@@ -47,7 +51,24 @@ export class LoginComponent {
       error: (error) => {
         console.error('Login failed:', error);
         this.errorMessage = error.error || 'Invalid email or password.';
+        this.stopSubmitting();
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.slowHintTimer);
+  }
+
+  // The hosted API can take up to a minute to wake from sleep.
+  private startSubmitting(): void {
+    this.isSubmitting = true;
+    this.slowHintTimer = setTimeout(() => (this.showSlowHint = true), 5000);
+  }
+
+  private stopSubmitting(): void {
+    this.isSubmitting = false;
+    this.showSlowHint = false;
+    clearTimeout(this.slowHintTimer);
   }
 }

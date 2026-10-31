@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -14,10 +14,13 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnDestroy {
   registerForm: FormGroup;
   errorMessage = '';
   successMessage = '';
+  isSubmitting = false;
+  showSlowHint = false;
+  private slowHintTimer?: ReturnType<typeof setTimeout>;
 
   constructor(
     private fb: FormBuilder,
@@ -38,11 +41,15 @@ export class RegisterComponent {
 
     this.errorMessage = '';
     this.successMessage = '';
+    this.startSubmitting();
 
     const { email, password } = this.registerForm.value;
 
     this.authService.register(email, password).subscribe({
       next: () => {
+        // Stay disabled through the redirect so the account isn't submitted twice.
+        this.showSlowHint = false;
+        clearTimeout(this.slowHintTimer);
         this.successMessage =
           'Registration successful! Redirecting to login...';
         setTimeout(() => {
@@ -53,7 +60,24 @@ export class RegisterComponent {
         console.error('Registration failed:', error);
         this.errorMessage =
           error.error || 'Registration failed. Please try again.';
+        this.stopSubmitting();
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.slowHintTimer);
+  }
+
+  // The hosted API can take up to a minute to wake from sleep.
+  private startSubmitting(): void {
+    this.isSubmitting = true;
+    this.slowHintTimer = setTimeout(() => (this.showSlowHint = true), 5000);
+  }
+
+  private stopSubmitting(): void {
+    this.isSubmitting = false;
+    this.showSlowHint = false;
+    clearTimeout(this.slowHintTimer);
   }
 }

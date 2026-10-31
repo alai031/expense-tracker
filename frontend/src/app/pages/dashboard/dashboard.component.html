@@ -38,6 +38,15 @@
           <p class="tabular">${{ summary.averageExpense | number: "1.2-2" }}</p>
         </div>
       </section>
+    } @else if (summaryLoading) {
+      <section class="stats" aria-busy="true">
+        @for (i of [1, 2, 3]; track i) {
+          <div class="card stat">
+            <span class="skeleton skeleton-text" style="width: 40%"></span>
+            <span class="skeleton skeleton-stat"></span>
+          </div>
+        }
+      </section>
     }
 
     <div class="grid-2">
@@ -46,7 +55,16 @@
         <div class="card-header">
           <h2 class="card-title">Spending by Category</h2>
         </div>
-        @if (categorySpending.length == 0) {
+        @if (categorySpendingLoading && categorySpending.length == 0) {
+          <ul class="category-list" aria-busy="true">
+            @for (i of [1, 2, 3, 4]; track i) {
+              <li>
+                <span class="skeleton skeleton-text"></span>
+                <span class="skeleton skeleton-meter"></span>
+              </li>
+            }
+          </ul>
+        } @else if (categorySpending.length == 0) {
           <p class="empty-state">No category spending yet.</p>
         } @else {
           <ul class="category-list">
@@ -73,7 +91,18 @@
         <div class="card-header">
           <h2 class="card-title">Monthly Spending</h2>
         </div>
-        @if (monthlySpending.length == 0) {
+        @if (monthlySpendingLoading && monthlySpending.length == 0) {
+          <ul class="month-chart" aria-busy="true">
+            @for (height of [45, 70, 55, 90, 65, 80]; track $index) {
+              <li>
+                <div class="month-track">
+                  <span class="skeleton skeleton-bar" [style.height.%]="height"></span>
+                </div>
+                <span class="skeleton skeleton-text" style="width: 70%"></span>
+              </li>
+            }
+          </ul>
+        } @else if (monthlySpending.length == 0) {
           <p class="empty-state">No monthly spending yet.</p>
         } @else {
           <ul class="month-chart">
@@ -188,6 +217,7 @@
         <app-expense-list
           [expenses]="expenses"
           [filtersApplied]="filtersApplied"
+          [loading]="expensesLoading"
           (expenseDeleted)="onExpenseDeleted($event)"
           (expenseEdit)="onExpenseEdit($event)"
         ></app-expense-list>

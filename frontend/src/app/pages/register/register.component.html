@@ -44,7 +44,23 @@
         <p class="alert alert-success" role="status">{{ successMessage }}</p>
       }
 
-      <button type="submit" class="btn btn-primary btn-block">Register</button>
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        [disabled]="isSubmitting"
+      >
+        @if (isSubmitting) {
+          <span class="spinner" aria-hidden="true"></span>
+          Creating account…
+        } @else {
+          Register
+        }
+      </button>
+      @if (showSlowHint) {
+        <p class="hint" role="status">
+          The server is waking up. This can take up to a minute.
+        </p>
+      }
     </form>
 
     <p class="auth-footer">

@@ -11,6 +11,7 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 export class ExpenseListComponent {
   @Input() expenses: Expense[] = [];
   @Input() filtersApplied = false;
+  @Input() loading = false;
   @Output() expenseDeleted = new EventEmitter<number>();
   @Output() expenseEdit = new EventEmitter<Expense>();
 

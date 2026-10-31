@@ -143,6 +143,23 @@
   font-weight: 600;
 }
 
+.skeleton-stat {
+  height: 2rem;
+  width: 55%;
+  margin-top: 0.75rem;
+}
+
+.skeleton-bar {
+  width: 100%;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.skeleton-meter {
+  height: 8px;
+  margin-top: 0.625rem;
+  border-radius: 999px;
+}
+
 .month-label {
   font-size: 0.75rem;
   color: var(--color-text-muted);
